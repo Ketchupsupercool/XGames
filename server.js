@@ -1,51 +1,74 @@
 // server.js
-// Simple backend proxy for your AI.html page.
-// Keeps your OpenAI API key SECRET (do not put keys in AI.html).
+// XGames AI backend (Render / Node 18+)
 
-import express from "express";
-import OpenAI from "openai";
+import express from "express"
+import cors from "cors"
+import OpenAI from "openai"
 
-const app = express();
-app.use(express.json({ limit: "1mb" }));
+const app = express()
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+/* ---------- Middleware ---------- */
+app.use(cors({
+  origin: "*", // allow AI.html from any domain
+  methods: ["POST", "GET"],
+  allowedHeaders: ["Content-Type"]
+}))
 
+app.use(express.json({ limit: "1mb" }))
+
+/* ---------- OpenAI Client ---------- */
+if (!process.env.OPENAI_API_KEY) {
+  console.error("❌ OPENAI_API_KEY is not set")
+}
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+})
+
+/* ---------- API Route ---------- */
 app.post("/api/chat", async (req, res) => {
   try {
-    const messages = Array.isArray(req.body?.messages) ? req.body.messages : [];
-    const userMessages = messages
-      .filter(m => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
-      .slice(-20);
+    const messages = Array.isArray(req.body?.messages)
+      ? req.body.messages.slice(-20)
+      : []
 
-    // Tutor-style system instruction (homework help)
-    const instructions = [
-      {
-        role: "system",
-        content:
-          "You are a helpful homework tutor for a teen. Explain step-by-step, ask clarifying questions when needed, and encourage learning. " +
-          "If the user asks for answers to a graded test/quiz, provide guidance and reasoning rather than just final answers. " +
-          "Keep responses school-appropriate and avoid explicit content."
-      }
-    ];
+    const systemPrompt = {
+      role: "system",
+      content:
+        "You are a helpful homework tutor for a teenager. " +
+        "Explain concepts step by step, encourage learning, and ask clarifying questions when needed. " +
+        "If the user asks for answers to a graded test or quiz, provide guidance and reasoning instead of just the final answer. " +
+        "Keep responses school-appropriate and non-explicit."
+    }
 
     const response = await openai.responses.create({
       model: "gpt-4.1-mini",
-      input: [...instructions, ...userMessages]
-    });
+      input: [systemPrompt, ...messages]
+    })
 
-    // Get text output from Responses API
     const reply =
       response.output_text ||
-      (Array.isArray(response.output) ? JSON.stringify(response.output) : "");
+      response.output?.[0]?.content?.[0]?.text ||
+      "I couldn't generate a response."
 
-    res.json({ reply });
+    res.json({ reply })
+
   } catch (err) {
-    res.status(500).send(String(err?.message || err));
+    console.error("🔥 OpenAI error:", err)
+    res.status(500).json({
+      error: "AI request failed",
+      details: String(err?.message || err)
+    })
   }
-});
+})
 
-const port = process.env.PORT || 3000;
-app.use(express.static(".")); // serves index.html, AI.html, Games/, etc.
-app.listen(port, () => {
-  console.log("Server running on http://localhost:" + port);
-});
+/* ---------- Health Check ---------- */
+app.get("/", (req, res) => {
+  res.send("XGames AI backend is running ✅")
+})
+
+/* ---------- Start Server ---------- */
+const PORT = process.env.PORT || 3000
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`)
+})
