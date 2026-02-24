@@ -5,7 +5,8 @@
   "private": true,
   "dependencies": {
     "express": "^4.19.2",
-    "openai": "^4.0.0"
+    "cors": "^2.8.5",
+    "openai": "^4.30.0"
   },
   "scripts": {
     "start": "node server.js"
