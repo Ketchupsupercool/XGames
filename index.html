@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>XGames</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: white;
+            text-align: center;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background-color: #000;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        h1 {
+            margin-top: 80px;
+            font-size: 40px;
+        }
+
+        .red-x {
+            color: red;
+            text-shadow: 0 0 15px red;
+        }
+
+        /* NAVBAR */
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: rgba(20, 0, 0, 0.95);
+            padding: 15px 0;
+            z-index: 10;
+            box-shadow: 0 0 15px red;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            background-color: red;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #111;
+            min-width: 160px;
+            border-radius: 5px;
+            box-shadow: 0 0 15px red;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            display: block;
+            text-decoration: none;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #330000;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* QUICK LINKS (added) */
+        .quick-links {
+            margin: 18px auto 6px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .quick-links a {
+            text-decoration: none;
+        }
+
+        .quick-btn {
+            background: red;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(255,0,0,0.35);
+        }
+
+        .quick-btn:hover {
+            background: darkred;
+            box-shadow: 0 0 15px red;
+        }
+
+        /* GAME GRID */
+
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 per row on desktop */
+            gap: 20px;
+            padding: 20px;
+        }
+
+        /* 3 per row on medium screens */
+        @media (max-width: 1100px) {
+            .game-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* 2 per row on small screens */
+        @media (max-width: 700px) {
+            .game-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .game-card {
+            background-color: rgba(34, 34, 34, 0.85);
+            padding: 15px;
+            border-radius: 10px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .game-card:hover {
+            background-color: rgba(51, 0, 0, 0.95);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px red;
+        }
+
+        /* GAME VIEWER OVERLAY */
+
+        .game-viewer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            display: none;
+            flex-direction: column;
+            z-index: 10000;
+        }
+
+        .viewer-topbar {
+            background: #111;
+            padding: 10px;
+            text-align: right;
+        }
+
+        .home-btn {
+            background: red;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .home-btn:hover {
+            background: darkred;
+        }
+
+        .game-frame {
+            flex: 1;
+            width: 100%;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<canvas id="bg"></canvas>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="dropdown">
+        <button class="dropbtn">Menu</button>
+        <div class="dropdown-content">
+            <!-- FIXED LINKS: now point into "other pages/" -->
+            <a href="other pages/about.html">About This Website</a>
+            <a href="other pages/emulator.html">Emulator</a>
+        </div>
+    </div>
+</div>
+
+<h1><span class="red-x">X</span>Games</h1>
+
+<div class="game-container">
+
+    <div class="game-card" onclick="openGame('Games/clfridaynightfunkin.html')">
+        <h3>Friday Night Funkin'</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/cluno.html')">
+        <h3>UNO</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clmario64webgl.html')">
+        <h3>Super Mario 64 WEBGL</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/cleaglerultimate.html')">
+        <h3>Eaglercraft Ultimate</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clsonicthehedgehog.html')">
+        <h3>Sonic The Hedgehog</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clsonicclassicheroes.html')">
+        <h3>Sonic Classic Heroes</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clretrobowl.html')">
+        <h3>Retro Bowl</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clbaconmaydie.html')">
+        <h3>Bacon May Die</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/cldeltarune.html')">
+        <h3>Deltarune</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clpokemonemerald.html')">
+        <h3>Pokemon Emerald</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/cldrivemady.html')">
+        <h3>Drive Mad</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clsubwaysurfersbeijing.html')">
+        <h3>Subway Surfers Beijing</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clbaldisbasics.html')">
+        <h3>Baldis Basics</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clEaglercraftL_19_v0_7_0_Offline_Signed.html')">
+        <h3>Eaglercraft Offline</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clbabysniperinvietnam.html')">
+        <h3>Baby Sniper in Vietnam</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/cl1on1soccer.html')">
+        <h3>1 on 1 Soccer</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/cl1v1tennis.html')">
+        <h3>1 on 1 Tennis</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clkoopasrevenge.html')">
+        <h3>Koopa's Revenge</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clbackyardbaseball.html')">
+        <h3>Backyard Baseball</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clbloons.html')">
+        <h3>Bloons</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clburritobisonrevenge.html')">
+        <h3>Burrito Bison Revenge</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clfireboyandwatergirl2.html')">
+        <h3>Fireboy &amp; Watergirl 2</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clfireboyandwatergirl3.html')">
+        <h3>Fireboy &amp; Watergirl 3</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clmonsterderby.html')">
+        <h3>Monster Derby</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clmegachess.html')">
+        <h3>MegaChess</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clmyteardrop.html')">
+        <h3>My Teardrop</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clmotox3mm.html')">
+        <h3>Moto X3M</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clmelonplayground.html')">
+        <h3>Melon Playground</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clmari0.html')">
+        <h3>Mari0</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clmadstuntcars2.html')">
+        <h3>Madalin Stunt Cars 2</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clsupermarioworld.html')">
+        <h3>Super Mario World</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clsupermarioworld2.html')">
+        <h3>Super Mario World 2</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clkirbysdreamland3.html')">
+        <h3>Kirby's Dream Land 3</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clstreetfighter2.html')">
+        <h3>Street Fighter II</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clsoniccd.html')">
+        <h3>Sonic CD</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clsonicmegamix4.html')">
+        <h3>Sonic MegaMix 4</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/cldeepestsword.html')">
+        <h3>Deepest Sword</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clcuttherope.html')">
+        <h3>Cut the Rope</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clfruitninja.html')">
+        <h3>Fruit Ninja</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/cldokidokiliteratureclub.html')">
+        <h3>Doki Doki Literature Club</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clFNAF.html')">
+        <h3>Five Nights at Freddy's</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clFNAF2.html')">
+        <h3>Five Nights at Freddy's 2</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clFNAF3.html')">
+        <h3>Five Nights at Freddy's 3</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clFNAF4.html')">
+        <h3>Five Nights at Freddy's 4</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clfnafucn.html')">
+        <h3>FNAF: Ultimate Custom Night</h3>
+    </div>
+
+    <div class="game-card" onclick="openGame('Games/clfnafps.html')">
+        <h3>FNAF Pizzeria Simulator</h3>
+    </div>
+
+</div>
+
+
+<!-- GAME VIEWER -->
+<div class="game-viewer" id="viewer">
+    <div class="viewer-topbar">
+        <button class="home-btn" onclick="closeGame()">Home</button>
+    </div>
+    <iframe class="game-frame" id="gameFrame"></iframe>
+</div>
+
+<script>
+function openGame(gameURL) {
+    document.getElementById("viewer").style.display = "flex";
+    document.getElementById("gameFrame").src = gameURL;
+}
+
+function closeGame() {
+    document.getElementById("viewer").style.display = "none";
+    document.getElementById("gameFrame").src = "";
+}
+</script>
+
+<!-- YOUR BACKGROUND SCRIPT (UNCHANGED) -->
+<script>
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+let mouse = { x: null, y: null };
+
+window.addEventListener("mousemove", e => {
+    mouse.x = e.x;
+    mouse.y = e.y;
+});
+
+window.addEventListener("resize", () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+
+class Particle {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = Math.random() * 2 - 1;
+        this.speedY = Math.random() * 2 - 1;
+    }
+
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+
+        if (mouse.x !== null) {
+            let dx = this.x - mouse.x;
+            let dy = this.y - mouse.y;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < 100) {
+                this.x += dx / 12;
+                this.y += dy / 12;
+            }
+        }
+    }
+
+    draw() {
+        ctx.fillStyle = "red";
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function init() {
+    particles = [];
+    for (let i = 0; i < 120; i++) {
+        particles.push(new Particle());
+    }
+}
+
+function animate() {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach(p => {
+        p.update();
+        p.draw();
+    });
+
+    requestAnimationFrame(animate);
+}
+
+init();
+animate();
+</script>
+
+</body>
+</html>

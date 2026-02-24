@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Chatbot - XGames</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #000;
+      color: #fff;
+      overflow-y: auto;
+      overflow-x: hidden;
+      text-align: center;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      background-color: rgba(20, 0, 0, 0.95);
+      padding: 14px 0;
+      z-index: 10;
+      box-shadow: 0 0 15px red;
+    }
+
+    .nav-inner {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 0 10px;
+    }
+
+    .brand {
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+    .brand .x {
+      color: red;
+      text-shadow: 0 0 15px red;
+    }
+
+    a { text-decoration: none; }
+    button {
+      padding: 10px 15px;
+      border: none;
+      background: red;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: darkred;
+      box-shadow: 0 0 10px red;
+    }
+
+    .wrap {
+      width: min(980px, 94vw);
+      margin: 22px auto 40px;
+      text-align: left;
+    }
+
+    h1 {
+      margin: 16px 0 10px;
+      font-size: 36px;
+      text-align: center;
+    }
+
+    .card {
+      background: rgba(34, 34, 34, 0.85);
+      border: 2px solid rgba(255, 0, 0, 0.6);
+      border-radius: 14px;
+      box-shadow: 0 0 18px rgba(255, 0, 0, 0.25);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 12px 14px;
+      background: rgba(20, 0, 0, 0.85);
+      box-shadow: 0 0 12px red;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 12px;
+      opacity: 0.9;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,0,0,0.6);
+      background: rgba(0,0,0,0.35);
+    }
+
+    .messages {
+      height: 62vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 14px;
+      background: rgba(0,0,0,0.35);
+    }
+
+    .msg {
+      max-width: 86%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      margin: 8px 0;
+      line-height: 1.35;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .msg.user {
+      margin-left: auto;
+      background: rgba(255, 0, 0, 0.18);
+      border: 1px solid rgba(255, 0, 0, 0.6);
+    }
+
+    .msg.bot {
+      margin-right: auto;
+      background: rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(255, 0, 0, 0.35);
+    }
+
+    .inputbar {
+      display: flex;
+      gap: 10px;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.6);
+      border-top: 1px solid rgba(255, 0, 0, 0.5);
+    }
+
+    .inputbar input {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 0, 0, 0.6);
+      background: #000;
+      color: #fff;
+      outline: none;
+    }
+    .inputbar input:focus {
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+    }
+
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      opacity: 0.9;
+      font-size: 12px;
+    }
+
+    .mini {
+      opacity: 0.9;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,0,0,0.45);
+      background: rgba(0,0,0,0.35);
+      margin: 6px 6px 0 0;
+      cursor: pointer;
+      user-select: none;
+    }
+    .pill:hover { box-shadow: 0 0 10px rgba(255,0,0,0.35); }
+  </style>
+</head>
+
+<body>
+  <div class="navbar">
+    <div class="nav-inner">
+      <div class="brand"><span class="x">X</span>Games AI</div>
+      <a href="index.html"><button>Home</button></a>
+      <button id="clearBtn">Clear</button>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <h1><span class="brand"><span class="x">X</span>Bot</span></h1>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <b>Homework Helper + Site Helper</b>
+          <div class="mini">Ask for explanations, step-by-step help, or to check your work.</div>
+        </div>
+        <span id="modeBadge" class="badge">Mode: Offline fallback</span>
+      </div>
+
+      <div id="messages" class="messages"></div>
+
+      <div class="inputbar">
+        <input id="input" type="text" placeholder="Type a question… (Enter to send)" autocomplete="off">
+        <button id="sendBtn">Send</button>
+      </div>
+    </div>
+
+    <div class="footer-row">
+      <div class="mini">
+        <b>Examples:</b><br>
+        <span class="pill" data-prompt="Explain the steps for solving 2x + 5 = 17">Solve an equation</span>
+        <span class="pill" data-prompt="Help me write a thesis statement about why recycling matters">Writing help</span>
+        <span class="pill" data-prompt="What are the controls for the emulator?">Emulator help</span>
+        <span class="pill" data-prompt="Quiz me on cell organelles (easy)">Study quiz</span>
+        <br><br>
+        <b>Academic note:</b> I can help you learn and explain. If this is a graded test, I’ll focus on guidance and steps rather than just giving final answers.
+      </div>
+
+      <div class="mini">
+        <b>How the AI works:</b><br>
+        If you set up the backend, this page will call <code>/api/chat</code>.<br>
+        If not, it uses a simple offline helper (basic).
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_ENDPOINT = "/api/chat"  // your backend route
+    const messagesEl = document.getElementById("messages")
+    const inputEl = document.getElementById("input")
+    const sendBtn = document.getElementById("sendBtn")
+    const clearBtn = document.getElementById("clearBtn")
+    const modeBadge = document.getElementById("modeBadge")
+
+    const state = { history: [] } // {role:'user'|'assistant', content:'...'}
+
+    function escapeHtml(s) {
+      return String(s)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;")
+    }
+
+    function addMsg(text, who) {
+      const div = document.createElement("div")
+      div.className = "msg " + who
+      div.innerHTML = escapeHtml(text)
+      messagesEl.appendChild(div)
+      messagesEl.scrollTop = messagesEl.scrollHeight
+    }
+
+    function saveChat() {
+      try { localStorage.setItem("xgames_ai_chat", JSON.stringify(state.history)) } catch {}
+    }
+
+    function loadChat() {
+      try {
+        const saved = JSON.parse(localStorage.getItem("xgames_ai_chat") || "[]")
+        if (Array.isArray(saved)) state.history = saved
+      } catch {}
+    }
+
+    function renderChat() {
+      messagesEl.innerHTML = ""
+      state.history.forEach(m => addMsg(m.content, m.role === "user" ? "user" : "bot"))
+    }
+
+    function offlineReply(text) {
+      const t = String(text || "").trim().toLowerCase()
+
+      if (!t) return "Type something and I’ll help 🙂"
+
+      if (t.includes("emulator")) return "Emulator tips: go to the Emulator page, drag & drop a ROM (.nes / .gb / .gbc). Controls are usually: arrows, Z/X, Enter, Shift."
+      if (t.includes("math") || t.includes("equation") || t.match(/\d/)) {
+        return "Tell me the exact problem and what you tried so far. I can walk you through the steps and check your work."
+      }
+      if (t.includes("essay") || t.includes("thesis")) {
+        return "What’s your topic + what side are you arguing? I can help you make a thesis and outline."
+      }
+      if (t.includes("study") || t.includes("quiz")) {
+        return "What subject and what chapter/topic? I can quiz you with questions and hints."
+      }
+      return "I can help with homework steps, explanations, and studying. Paste the question and your attempt."
+    }
+
+    async function callApi(userText) {
+      const payload = {
+        messages: state.history.slice(-20) // keep recent context
+      }
+
+      // add user message to payload
+      payload.messages.push({ role: "user", content: userText })
+
+      const res = await fetch(API_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+
+      if (!res.ok) {
+        const msg = await res.text().catch(() => "")
+        throw new Error("API error " + res.status + (msg ? (": " + msg) : ""))
+      }
+
+      const data = await res.json()
+      return data.reply || data.output || ""
+    }
+
+    async function send() {
+      const text = inputEl.value
+      inputEl.value = ""
+      if (!text.trim()) return
+
+      state.history.push({ role: "user", content: text })
+      addMsg(text, "user")
+      saveChat()
+
+      // show typing placeholder
+      const placeholder = document.createElement("div")
+      placeholder.className = "msg bot"
+      placeholder.textContent = "Thinking…"
+      messagesEl.appendChild(placeholder)
+      messagesEl.scrollTop = messagesEl.scrollHeight
+
+      try {
+        let reply = ""
+        // Try API first; if it fails, fallback offline
+        reply = await callApi(text)
+
+        modeBadge.textContent = "Mode: API connected"
+        placeholder.remove()
+        state.history.push({ role: "assistant", content: reply })
+        addMsg(reply, "bot")
+        saveChat()
+      } catch (e) {
+        modeBadge.textContent = "Mode: Offline fallback"
+        placeholder.remove()
+        const reply = offlineReply(text)
+        state.history.push({ role: "assistant", content: reply })
+        addMsg(reply, "bot")
+        saveChat()
+      }
+    }
+
+    sendBtn.addEventListener("click", send)
+    inputEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") send()
+    })
+
+    clearBtn.addEventListener("click", () => {
+      state.history = []
+      saveChat()
+      renderChat()
+      addMsg("Chat cleared. Ask me anything!", "bot")
+    })
+
+    document.querySelectorAll(".pill").forEach(p => {
+      p.addEventListener("click", () => {
+        inputEl.value = p.getAttribute("data-prompt") || ""
+        inputEl.focus()
+      })
+    })
+
+    loadChat()
+    renderChat()
+    if (state.history.length === 0) {
+      addMsg("Hey! I’m XBot. Ask me for homework help (steps + explanations) or questions about the site.", "bot")
+    }
+  </script>
+</body>
+</html>
