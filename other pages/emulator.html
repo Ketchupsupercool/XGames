@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <title>Emulator - XGames</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
   <style>
-    canvas:focus { outline: none; }
-    body { margin:0; background:#000; color:#fff; font-family:Arial,sans-serif; text-align:center; }
+    body { margin:0; background:#000; color:#fff; font-family:Arial,sans-serif; text-align:center; overflow:hidden; }
+    a{ color:inherit; text-decoration:none; }
 
     .topbar{
       position:sticky; top:0; z-index:10;
@@ -22,238 +24,131 @@
       padding:9px 12px; cursor:pointer; font-weight:bold;
     }
     button:hover{ background:darkred; box-shadow:0 0 10px red; }
-    a{ color:inherit; text-decoration:none; }
 
-    .wrap{ padding:18px 12px 26px; }
+    .wrap{ padding:18px 12px 18px; height: calc(100vh - 64px); display:flex; flex-direction:column; gap:14px; }
+
+    /* Top hint area (same vibe as your old drop-zone) */
     .drop-zone{
-      width:min(900px,92vw); height:170px; margin:18px auto;
-      border:3px dashed red; border-radius:14px;
-      display:flex; align-items:center; justify-content:center;
-      font-size:18px; transition:.2s; user-select:none;
+      width:min(980px,92vw);
+      margin:0 auto;
+      border:3px dashed red;
+      border-radius:14px;
+      padding:16px 14px;
+      user-select:none;
+      background: rgba(0,0,0,0.35);
+      box-shadow:0 0 18px rgba(255,0,0,0.25);
+      text-align:left;
     }
-    .drop-zone.dragover{ background:rgba(255,0,0,0.12); transform:scale(1.01); }
-    .hint{ opacity:.9; font-size:14px; margin-top:6px; }
+    .drop-title{ font-size:18px; font-weight:bold; }
+    .hint{ opacity:.9; font-size:14px; margin-top:6px; line-height:1.4; }
+    .small{ opacity:.8; font-size:12px; margin-top:8px; line-height:1.4; }
 
-    .screen-wrap{
-      width:min(900px,92vw); margin:0 auto;
-      border:3px solid red; border-radius:14px; overflow:hidden;
-      background:#000; box-shadow:0 0 18px rgba(255,0,0,0.35);
+    /* Emulator shell */
+    .frame-shell{
+      width:min(980px,92vw);
+      margin:0 auto;
+      border:3px solid red;
+      border-radius:14px;
+      overflow:hidden;
+      background:#000;
+      box-shadow:0 0 18px rgba(255,0,0,0.35);
+      flex:1;
+      position:relative;
     }
-    canvas{
-      display:block; width:100%; height:auto; background:#000;
-      image-rendering: pixelated; image-rendering: crisp-edges;
+    iframe{
+      width:100%;
+      height:100%;
+      border:0;
+      background:#000;
     }
 
-    .status{
-      width:min(900px,92vw); margin:14px auto 0;
-      font-size:14px; opacity:.9; text-align:left; line-height:1.4;
+    /* Non-blocking overlay hint */
+    .overlay{
+      position:absolute;
+      left:12px; bottom:12px;
+      padding:8px 10px;
+      border-radius:10px;
+      border:1px solid rgba(255,0,0,0.35);
+      background: rgba(0,0,0,0.55);
+      font-size:12px;
+      opacity:0.85;
+      pointer-events:none;
+      max-width: calc(100% - 24px);
+    }
+    .overlay b{ color:red; }
+
+    /* Inline status pill */
+    .pill{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,0,0,0.55);
+      background: rgba(0,0,0,0.35);
+      font-size:12px;
+      margin-top:10px;
     }
     .ok{ color:#9bff9b; }
     .bad{ color:#ff9b9b; }
-    .small{ opacity:.8; font-size:12px; margin-top:6px; }
   </style>
-
-  <!-- NES emulator -->
-  <script src="https://unpkg.com/jsnes/dist/jsnes.min.js"></script>
 </head>
 
 <body>
   <div class="topbar">
     <div class="brand"><span class="x">X</span>Games Emulator</div>
-
-    <button id="btnStop">Stop</button>
+    <button id="btnReload">Reload</button>
     <button id="btnFullscreen">Fullscreen</button>
-    <button id="btnColorFix">Fix Colors: Off</button>
-    <a href="../index.html"><button>Home</button></a>
+    <a href="/index.html"><button>Home</button></a>
   </div>
 
   <div class="wrap">
-    <div id="dropZone" class="drop-zone">Drag & Drop a .NES ROM file here</div>
-    <div class="hint">Or click the box to choose a file.</div>
-
-    <div class="screen-wrap">
-      <canvas id="screen" width="256" height="240" tabindex="0"></canvas>
+    <div class="drop-zone">
+      <div class="drop-title">WebRetro Emulator</div>
+      <div class="hint">
+        <b>How to play:</b> Drag &amp; drop a ROM file into the emulator window below (the big red box).
+        <br/>If nothing shows up, click <b>Reload</b>.
+      </div>
+      <div class="small">
+        <b>Important:</b> WebRetro must be deployed at <code>/webretro/index.html</code> (site root).
+        This page can live in <code>other pages/</code> and still work because it uses absolute paths.
+      </div>
+      <div class="pill" id="pathStatus">Checking /webretro/index.html…</div>
     </div>
 
-    <div class="status" id="status">
-      <div><b>Status:</b> <span class="ok">Ready.</span></div>
-      <div class="small">Controls: Arrows = D-Pad, Z = A, X = B, Enter = Start, Shift = Select</div>
-      <div class="small">Tip: click the screen if your keyboard isn’t controlling the game.</div>
+    <div class="frame-shell" id="shell">
+      <!-- IMPORTANT: No sandbox attribute (it breaks WebRetro) -->
+      <iframe id="emuFrame" src="/webretro/index.html" allowfullscreen></iframe>
+      <div class="overlay">Tip: <b>Drag &amp; drop</b> a ROM into the emulator</div>
     </div>
   </div>
 
   <script>
-    const dropZone = document.getElementById("dropZone");
-    const canvas = document.getElementById("screen");
-    const ctx = canvas.getContext("2d", { alpha: false });
-    const statusEl = document.getElementById("status");
-
-    const btnStop = document.getElementById("btnStop");
+    const frame = document.getElementById("emuFrame");
+    const statusEl = document.getElementById("pathStatus");
+    const btnReload = document.getElementById("btnReload");
     const btnFullscreen = document.getElementById("btnFullscreen");
-    const btnColorFix = document.getElementById("btnColorFix");
+    const shell = document.getElementById("shell");
 
-    canvas.addEventListener("click", () => canvas.focus());
-
-    let swapRB = false;
-    btnColorFix.addEventListener("click", () => {
-      swapRB = !swapRB;
-      btnColorFix.textContent = `Fix Colors: ${swapRB ? "On" : "Off"}`;
-    });
-
-    // hidden picker (NES only)
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = ".nes";
-    fileInput.style.display = "none";
-    document.body.appendChild(fileInput);
-
-    let nes = null;
-    let nesAnim = null;
-
-    function setStatus(html){ statusEl.innerHTML = html; }
-
-    function stopAll(){
-      if (nesAnim) cancelAnimationFrame(nesAnim);
-      nesAnim = null;
-      nes = null;
-
-      ctx.fillStyle = "black";
-      ctx.fillRect(0,0,canvas.width,canvas.height);
-
-      setStatus(`
-        <div><b>Status:</b> <span class="ok">Stopped.</span></div>
-        <div class="small">Controls: Arrows = D-Pad, Z = A, X = B, Enter = Start, Shift = Select</div>
-      `);
-    }
-
-    function toggleFullscreen(){
-      if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
-      else document.exitFullscreen?.();
-    }
-
-    btnStop.addEventListener("click", stopAll);
-    btnFullscreen.addEventListener("click", toggleFullscreen);
-
-    // prevent browser from opening the rom
-    ["dragenter","dragover","dragleave","drop"].forEach(evt => {
-      window.addEventListener(evt, (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-      }, { passive:false });
-    });
-
-    dropZone.addEventListener("click", () => fileInput.click());
-    fileInput.addEventListener("change", () => {
-      const f = fileInput.files && fileInput.files[0];
-      if (f) handleRomFile(f);
-      fileInput.value = "";
-    });
-
-    dropZone.addEventListener("dragenter", () => dropZone.classList.add("dragover"));
-    dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
-    dropZone.addEventListener("dragover", () => dropZone.classList.add("dragover"));
-    dropZone.addEventListener("drop", (e) => {
-      dropZone.classList.remove("dragover");
-      const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-      if (f) handleRomFile(f);
-    });
-
-    function mapKey(key){
-      if (key === "ArrowUp") return "up";
-      if (key === "ArrowDown") return "down";
-      if (key === "ArrowLeft") return "left";
-      if (key === "ArrowRight") return "right";
-      if (key === "z" || key === "Z") return "a";
-      if (key === "x" || key === "X") return "b";
-      if (key === "Enter") return "start";
-      if (key === "Shift") return "select";
-      return null;
-    }
-
-    window.addEventListener("keydown", (e) => {
-      const b = mapKey(e.key);
-      if (!b || !nes) return;
-
-      e.preventDefault();
-      const C = jsnes.Controller;
-      const m = {up:C.BUTTON_UP,down:C.BUTTON_DOWN,left:C.BUTTON_LEFT,right:C.BUTTON_RIGHT,
-                 a:C.BUTTON_A,b:C.BUTTON_B,start:C.BUTTON_START,select:C.BUTTON_SELECT};
-      nes.buttonDown(1, m[b]);
-    }, { passive:false });
-
-    window.addEventListener("keyup", (e) => {
-      const b = mapKey(e.key);
-      if (!b || !nes) return;
-
-      e.preventDefault();
-      const C = jsnes.Controller;
-      const m = {up:C.BUTTON_UP,down:C.BUTTON_DOWN,left:C.BUTTON_LEFT,right:C.BUTTON_RIGHT,
-                 a:C.BUTTON_A,b:C.BUTTON_B,start:C.BUTTON_START,select:C.BUTTON_SELECT};
-      nes.buttonUp(1, m[b]);
-    }, { passive:false });
-
-    function escapeHtml(str){
-      return String(str)
-        .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;").replaceAll("'","&#039;");
-    }
-
-    function startNES(arrayBuffer, fileName){
-      stopAll();
-      canvas.focus();
-
-      canvas.width = 256;
-      canvas.height = 240;
-
-      const imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
-      const buf = imageData.data;
-
-      nes = new jsnes.NES({
-        onFrame: (frame) => {
-          for (let i=0;i<frame.length;i++){
-            const x=i*4, c=frame[i];
-
-            let r = (c >> 16) & 255;
-            let g = (c >> 8) & 255;
-            let b = c & 255;
-
-            if (swapRB) { const t = r; r = b; b = t; }
-
-            buf[x]   = r;
-            buf[x+1] = g;
-            buf[x+2] = b;
-            buf[x+3] = 255;
-          }
-          ctx.putImageData(imageData,0,0);
-        }
+    // Show whether /webretro/index.html is actually deployed
+    fetch("/webretro/index.html", { method: "GET", cache: "no-store" })
+      .then(r => {
+        if (r.ok) statusEl.innerHTML = '<span class="ok">✅ Found /webretro/index.html</span>';
+        else statusEl.innerHTML = '<span class="bad">❌ /webretro/index.html returned ' + r.status + '</span>';
+      })
+      .catch(() => {
+        statusEl.innerHTML = '<span class="bad">❌ Could not reach /webretro/index.html</span>';
       });
 
-      // convert ArrayBuffer -> binary string for jsnes
-      const u8 = new Uint8Array(arrayBuffer);
-      let bin = "";
-      const chunk = 0x8000;
-      for (let i=0;i<u8.length;i+=chunk){
-        bin += String.fromCharCode.apply(null, u8.subarray(i, i+chunk));
-      }
-      nes.loadROM(bin);
+    btnReload.addEventListener("click", () => {
+      // Force a hard reload of the iframe (cache-bust)
+      const url = new URL(frame.getAttribute("src"), window.location.origin);
+      url.searchParams.set("v", String(Date.now()));
+      frame.src = url.toString();
+    });
 
-      const loop = () => { if (!nes) return; nes.frame(); nesAnim = requestAnimationFrame(loop); };
-      loop();
-
-      setStatus(`<div><b>Status:</b> <span class="ok">Playing NES</span> — ${escapeHtml(fileName)}</div>
-                 <div class="small">Controls: Arrows, Z, X, Enter, Shift</div>`);
-    }
-
-    async function handleRomFile(file){
-      const ext = (file.name.split(".").pop() || "").toLowerCase();
-      if (ext !== "nes"){
-        setStatus(`<div><b>Status:</b> <span class="bad">Unsupported file.</span></div>
-                   <div class="small">NES only: please use a .nes ROM</div>`);
-        return;
-      }
-      const buf = await file.arrayBuffer();
-      startNES(buf, file.name);
-    }
+    btnFullscreen.addEventListener("click", () => {
+      if (!document.fullscreenElement) shell.requestFullscreen?.();
+      else document.exitFullscreen?.();
+    });
   </script>
 </body>
 </html>
