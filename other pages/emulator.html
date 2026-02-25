@@ -1,60 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Emulator - XGames</title>
+  <meta charset="UTF-8" />
+  <title>Emulator • XGames</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
   <style>
-    body { margin:0; background:#000; color:#fff; font-family:Arial,sans-serif; text-align:center; overflow:hidden; }
+    :root{
+      --x-red:#ff0000;
+      --border: rgba(255,0,0,0.65);
+      --glow: rgba(255,0,0,0.35);
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family: Arial, sans-serif;
+      color:#fff;
+      background:#000;
+      overflow-y:auto;
+    }
+
     a{ color:inherit; text-decoration:none; }
 
     .topbar{
-      position:sticky; top:0; z-index:10;
+      position:sticky;
+      top:0;
+      z-index:10;
       background:rgba(20,0,0,0.95);
       padding:12px 10px;
-      box-shadow:0 0 15px red;
-      display:flex; gap:10px; justify-content:center; align-items:center; flex-wrap:wrap;
+      box-shadow:0 0 15px var(--x-red);
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      align-items:center;
+      flex-wrap:wrap;
     }
-    .brand{ font-weight:bold; letter-spacing:.5px; }
-    .brand .x{ color:red; text-shadow:0 0 15px red; }
+
+    .brand{
+      font-weight:bold;
+      letter-spacing:.5px;
+    }
+    .brand .x{
+      color:var(--x-red);
+      text-shadow:0 0 15px var(--x-red);
+    }
 
     button{
-      background:red; color:#fff; border:none; border-radius:6px;
-      padding:9px 12px; cursor:pointer; font-weight:bold;
+      background:var(--x-red);
+      color:#fff;
+      border:none;
+      border-radius:6px;
+      padding:9px 14px;
+      cursor:pointer;
+      font-weight:bold;
     }
-    button:hover{ background:darkred; box-shadow:0 0 10px red; }
-
-    .wrap{ padding:18px 12px 18px; height: calc(100vh - 64px); display:flex; flex-direction:column; gap:14px; }
-
-    /* Top hint area (same vibe as your old drop-zone) */
-    .drop-zone{
-      width:min(980px,92vw);
-      margin:0 auto;
-      border:3px dashed red;
-      border-radius:14px;
-      padding:16px 14px;
-      user-select:none;
-      background: rgba(0,0,0,0.35);
-      box-shadow:0 0 18px rgba(255,0,0,0.25);
-      text-align:left;
+    button:hover{
+      background:darkred;
+      box-shadow:0 0 10px var(--x-red);
     }
-    .drop-title{ font-size:18px; font-weight:bold; }
-    .hint{ opacity:.9; font-size:14px; margin-top:6px; line-height:1.4; }
-    .small{ opacity:.8; font-size:12px; margin-top:8px; line-height:1.4; }
 
-    /* Emulator shell */
-    .frame-shell{
-      width:min(980px,92vw);
+    .content{
+      max-width:1100px;
       margin:0 auto;
-      border:3px solid red;
-      border-radius:14px;
+      padding:20px 14px 40px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
+
+    .info{
+      background: rgba(255,0,0,0.12);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:14px;
+      box-shadow:0 0 18px var(--glow);
+      font-size:14px;
+      line-height:1.45;
+    }
+
+    .emu-shell{
+      width:100%;
+      height:70vh;
+      min-height:420px;
+      border:3px solid var(--x-red);
+      border-radius:16px;
       overflow:hidden;
       background:#000;
-      box-shadow:0 0 18px rgba(255,0,0,0.35);
-      flex:1;
+      box-shadow:0 0 20px var(--glow);
       position:relative;
     }
+
     iframe{
       width:100%;
       height:100%;
@@ -62,93 +99,52 @@
       background:#000;
     }
 
-    /* Non-blocking overlay hint */
     .overlay{
       position:absolute;
-      left:12px; bottom:12px;
-      padding:8px 10px;
+      left:14px;
+      bottom:14px;
+      padding:8px 12px;
       border-radius:10px;
       border:1px solid rgba(255,0,0,0.35);
       background: rgba(0,0,0,0.55);
       font-size:12px;
       opacity:0.85;
       pointer-events:none;
-      max-width: calc(100% - 24px);
     }
-    .overlay b{ color:red; }
+    .overlay b{ color:var(--x-red); }
 
-    /* Inline status pill */
-    .pill{
-      display:inline-block;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,0,0,0.55);
-      background: rgba(0,0,0,0.35);
+    footer{
+      text-align:center;
+      opacity:0.7;
       font-size:12px;
       margin-top:10px;
     }
-    .ok{ color:#9bff9b; }
-    .bad{ color:#ff9b9b; }
   </style>
 </head>
 
 <body>
+
   <div class="topbar">
-    <div class="brand"><span class="x">X</span>Games Emulator</div>
-    <button id="btnReload">Reload</button>
-    <button id="btnFullscreen">Fullscreen</button>
+    <div class="brand"><span class="x">X</span>Games • Emulator</div>
     <a href="/index.html"><button>Home</button></a>
   </div>
 
-  <div class="wrap">
-    <div class="drop-zone">
-      <div class="drop-title">WebRetro Emulator</div>
-      <div class="hint">
-        <b>How to play:</b> Drag &amp; drop a ROM file into the emulator window below (the big red box).
-        <br/>If nothing shows up, click <b>Reload</b>.
-      </div>
-      <div class="small">
-        <b>Important:</b> WebRetro must be deployed at <code>/webretro/index.html</code> (site root).
-        This page can live in <code>other pages/</code> and still work because it uses absolute paths.
-      </div>
-      <div class="pill" id="pathStatus">Checking /webretro/index.html…</div>
+  <div class="content">
+    <div class="info">
+      <b>How to play:</b> Drag and drop a ROM file directly into the emulator window below.
+      <br>
+      <b>Note:</b> Some systems or games may not behave perfectly in a browser.
     </div>
 
-    <div class="frame-shell" id="shell">
-      <!-- IMPORTANT: No sandbox attribute (it breaks WebRetro) -->
-      <iframe id="emuFrame" src="/webretro/index.html" allowfullscreen></iframe>
-      <div class="overlay">Tip: <b>Drag &amp; drop</b> a ROM into the emulator</div>
+    <div class="emu-shell">
+      <iframe src="/webretro/index.html" allowfullscreen></iframe>
+      <div class="overlay">Tip: <b>Drag &amp; drop</b> a ROM to start playing</div>
     </div>
+
+    <footer>
+      XGames Emulator • Powered by WebRetro
+    </footer>
   </div>
 
-  <script>
-    const frame = document.getElementById("emuFrame");
-    const statusEl = document.getElementById("pathStatus");
-    const btnReload = document.getElementById("btnReload");
-    const btnFullscreen = document.getElementById("btnFullscreen");
-    const shell = document.getElementById("shell");
-
-    // Show whether /webretro/index.html is actually deployed
-    fetch("/webretro/index.html", { method: "GET", cache: "no-store" })
-      .then(r => {
-        if (r.ok) statusEl.innerHTML = '<span class="ok">✅ Found /webretro/index.html</span>';
-        else statusEl.innerHTML = '<span class="bad">❌ /webretro/index.html returned ' + r.status + '</span>';
-      })
-      .catch(() => {
-        statusEl.innerHTML = '<span class="bad">❌ Could not reach /webretro/index.html</span>';
-      });
-
-    btnReload.addEventListener("click", () => {
-      // Force a hard reload of the iframe (cache-bust)
-      const url = new URL(frame.getAttribute("src"), window.location.origin);
-      url.searchParams.set("v", String(Date.now()));
-      frame.src = url.toString();
-    });
-
-    btnFullscreen.addEventListener("click", () => {
-      if (!document.fullscreenElement) shell.requestFullscreen?.();
-      else document.exitFullscreen?.();
-    });
-  </script>
 </body>
 </html>
