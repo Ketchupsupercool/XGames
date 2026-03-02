@@ -3,7 +3,7 @@
 <head>
     <title>XGames</title>
     <style>
-        body {
+body {
             margin: 0;
             font-family: Arial, sans-serif;
             color: white;
@@ -113,23 +113,36 @@
 
         /* GAME GRID */
 
-        .game-container {
+                .game-container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .game-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr); /* 4 per row on desktop */
             gap: 20px;
-            padding: 20px;
+            padding: 10px 0 30px;
         }
 
-        /* 3 per row on medium screens */
+        .category-title {
+            text-align: left;
+            margin: 18px 0 8px;
+            font-size: 22px;
+            letter-spacing: 0.3px;
+            text-shadow: 0 0 10px rgba(255,0,0,0.35);
+        }
+/* 3 per row on medium screens */
         @media (max-width: 1100px) {
-            .game-container {
+            .game-grid {
                 grid-template-columns: repeat(3, 1fr);
             }
         }
 
         /* 2 per row on small screens */
         @media (max-width: 700px) {
-            .game-container {
+            .game-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
@@ -186,7 +199,34 @@
             width: 100%;
             border: none;
         }
-    </style>
+
+        .tabs{
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+            justify-content:center;
+            align-items:center;
+            margin: 10px 0 18px;
+        }
+        .tab-btn{
+            background: rgba(255,0,0,0.95);
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            padding: 10px 16px;
+            cursor: pointer;
+            font-weight: 700;
+            box-shadow: 0 0 12px rgba(255,0,0,0.25);
+        }
+        .tab-btn:hover{
+            background: darkred;
+            box-shadow: 0 0 14px rgba(255,0,0,0.35);
+        }
+        .tab-btn.active{
+            outline: 2px solid rgba(255,255,255,0.35);
+            background: #ff0000;
+        }
+</style>
 </head>
 
 <body>
@@ -210,190 +250,223 @@
 
 <div class="game-container">
 
-    <div class="game-card" onclick="openGame('Games/clfridaynightfunkin.html')">
-        <h3>Friday Night Funkin'</h3>
+    <div class="tabs">
+      <button class="tab-btn active" data-filter="all">All</button>
+      <button class="tab-btn" data-filter="new">New</button>
+      <button class="tab-btn" data-filter="popular">Popular</button>
     </div>
 
-    <div class="game-card" onclick="openGame('Games/cluno.html')">
-        <h3>UNO</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clmario64webgl.html')">
-        <h3>Super Mario 64 WEBGL</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/cleaglerultimate.html')">
-        <h3>Eaglercraft Ultimate</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clsonicthehedgehog.html')">
-        <h3>Sonic The Hedgehog</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clsonicclassicheroes.html')">
-        <h3>Sonic Classic Heroes</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clretrobowl.html')">
-        <h3>Retro Bowl</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clbaconmaydie.html')">
-        <h3>Bacon May Die</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/cldeltarune.html')">
-        <h3>Deltarune</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clpokemonemerald.html')">
-        <h3>Pokemon Emerald</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/cldrivemady.html')">
-        <h3>Drive Mad</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clsubwaysurfersbeijing.html')">
-        <h3>Subway Surfers Beijing</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clbaldisbasics.html')">
-        <h3>Baldis Basics</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clEaglercraftL_19_v0_7_0_Offline_Signed.html')">
-        <h3>Eaglercraft Offline</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clbabysniperinvietnam.html')">
-        <h3>Baby Sniper in Vietnam</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/cl1on1soccer.html')">
-        <h3>1 on 1 Soccer</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/cl1v1tennis.html')">
-        <h3>1 on 1 Tennis</h3>
-    </div>
-
+    <h2 class="category-title">Platformers</h2>
+    <div class="game-grid">
+    <div class="game-card" data-tags="popular" onclick="openGame('Games/clmario64webgl.html')">
+            <h3>Super Mario 64 WEBGL</h3>
+        </div>
     <div class="game-card" onclick="openGame('Games/clkoopasrevenge.html')">
-        <h3>Koopa's Revenge</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clbackyardbaseball.html')">
-        <h3>Backyard Baseball</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clbloons.html')">
-        <h3>Bloons</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clburritobisonrevenge.html')">
-        <h3>Burrito Bison Revenge</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clfireboyandwatergirl2.html')">
-        <h3>Fireboy &amp; Watergirl 2</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clfireboyandwatergirl3.html')">
-        <h3>Fireboy &amp; Watergirl 3</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clmonsterderby.html')">
-        <h3>Monster Derby</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clmegachess.html')">
-        <h3>MegaChess</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clmyteardrop.html')">
-        <h3>My Teardrop</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clmotox3mm.html')">
-        <h3>Moto X3M</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clmelonplayground.html')">
-        <h3>Melon Playground</h3>
-    </div>
-
+            <h3>Koopa's Revenge</h3>
+        </div>
     <div class="game-card" onclick="openGame('Games/clmari0.html')">
-        <h3>Mari0</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clmadstuntcars2.html')">
-        <h3>Madalin Stunt Cars 2</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clsupermarioworld.html')">
-        <h3>Super Mario World</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clsupermarioworld2.html')">
-        <h3>Super Mario World 2</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clkirbysdreamland3.html')">
-        <h3>Kirby's Dream Land 3</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clstreetfighter2.html')">
-        <h3>Street Fighter II</h3>
-    </div>
-
+            <h3>Mari0</h3>
+        </div>
+    <div class="game-card" data-tags="popular" onclick="openGame('Games/clsupermarioworld.html')">
+            <h3>Super Mario World</h3>
+        </div>
+    <div class="game-card" data-tags="popular" onclick="openGame('Games/clsupermarioworld2.html')">
+            <h3>Super Mario World 2</h3>
+        </div>
+    <div class="game-card" data-tags="new popular" onclick="openGame('Games/clrun3.html')">
+            <h3>Run 3</h3>
+        </div>
+    <div class="game-card" data-tags="new" onclick="openGame('Games/cljumbomario.html')">
+            <h3>Jumbo Mario</h3>
+        </div>
+    <div class="game-card" data-tags="new popular" onclick="openGame('Games/clvex6.html')">
+            <h3>Vex 6</h3>
+        </div>
+    <div class="game-card" data-tags="new" onclick="openGame('Games/clovodimensions.html')">
+            <h3>OvO Dimensions</h3>
+        </div>
+    <div class="game-card" data-tags="new" onclick="openGame('Games/clovo2.html')">
+            <h3>OvO 2</h3>
+        </div>
+    <div class="game-card" data-tags="new popular" onclick="openGame('Games/clstickmanhook.html')">
+            <h3>Stickman Hook</h3>
+        </div>
+    <div class="game-card" onclick="openGame('Games/clsonicthehedgehog.html')">
+            <h3>Sonic The Hedgehog</h3>
+        </div>
+    <div class="game-card" onclick="openGame('Games/clsonicclassicheroes.html')">
+            <h3>Sonic Classic Heroes</h3>
+        </div>
     <div class="game-card" onclick="openGame('Games/clsoniccd.html')">
-        <h3>Sonic CD</h3>
-    </div>
-
+            <h3>Sonic CD</h3>
+        </div>
     <div class="game-card" onclick="openGame('Games/clsonicmegamix4.html')">
-        <h3>Sonic MegaMix 4</h3>
-    </div>
-
+            <h3>Sonic MegaMix 4</h3>
+        </div>
+    <div class="game-card" onclick="openGame('Games/clkirbysdreamland3.html')">
+            <h3>Kirby's Dream Land 3</h3>
+        </div>
     <div class="game-card" onclick="openGame('Games/cldeepestsword.html')">
-        <h3>Deepest Sword</h3>
+            <h3>Deepest Sword</h3>
+        </div>
     </div>
 
-    <div class="game-card" onclick="openGame('Games/clcuttherope.html')">
-        <h3>Cut the Rope</h3>
-    </div>
 
+    <h2 class="category-title">Action and Shooter</h2>
+    <div class="game-grid">
+    <div class="game-card" data-tags="new popular" onclick="openGame('Games/krunker.html')">
+            <h3>Krunker</h3>
+        </div>
+    <div class="game-card" onclick="openGame('Games/clbaconmaydie.html')">
+            <h3>Bacon May Die</h3>
+        </div>
+    <div class="game-card" onclick="openGame('Games/clbabysniperinvietnam.html')">
+            <h3>Baby Sniper in Vietnam</h3>
+        </div>
     <div class="game-card" onclick="openGame('Games/clfruitninja.html')">
-        <h3>Fruit Ninja</h3>
+            <h3>Fruit Ninja</h3>
+        </div>
+    <div class="game-card" onclick="openGame('Games/clburritobisonrevenge.html')">
+            <h3>Burrito Bison Revenge</h3>
+        </div>
+    <div class="game-card" onclick="openGame('Games/clmelonplayground.html')">
+            <h3>Melon Playground</h3>
+        </div>
+    <div class="game-card" onclick="openGame('Games/clstreetfighter2.html')">
+            <h3>Street Fighter II</h3>
+        </div>
     </div>
 
+
+    <h2 class="category-title">Racing and Driving</h2>
+    <div class="game-grid">
+    <div class="game-card" data-tags="popular" onclick="openGame('Games/cldrivemady.html')">
+            <h3>Drive Mad</h3>
+        </div>
+    <div class="game-card" data-tags="popular" onclick="openGame('Games/clmotox3mm.html')">
+            <h3>Moto X3M</h3>
+        </div>
+    <div class="game-card" onclick="openGame('Games/clmadstuntcars2.html')">
+            <h3>Madalin Stunt Cars 2</h3>
+        </div>
+    <div class="game-card" data-tags="new" onclick="openGame('Games/cldrifthuntersmerge.html')">
+            <h3>Drift Hunters</h3>
+        </div>
+    <div class="game-card" onclick="openGame('Games/clmonsterderby.html')">
+            <h3>Monster Derby</h3>
+        </div>
+    <div class="game-card" data-tags="popular" onclick="openGame('Games/clsubwaysurfersbeijing.html')">
+            <h3>Subway Surfers Beijing</h3>
+        </div>
+    </div>
+
+
+    <h2 class="category-title">Sports</h2>
+    <div class="game-grid">
+    <div class="game-card" data-tags="popular" onclick="openGame('Games/clretrobowl.html')">
+            <h3>Retro Bowl</h3>
+        </div>
+    <div class="game-card" onclick="openGame('Games/cl1on1soccer.html')">
+            <h3>1 on 1 Soccer</h3>
+        </div>
+    <div class="game-card" onclick="openGame('Games/cl1v1tennis.html')">
+            <h3>1 on 1 Tennis</h3>
+        </div>
+    <div class="game-card" onclick="openGame('Games/clbackyardbaseball.html')">
+            <h3>Backyard Baseball</h3>
+        </div>
+    </div>
+
+
+    <h2 class="category-title">Puzzle and Strategy</h2>
+    <div class="game-grid">
+    <div class="game-card" onclick="openGame('Games/cluno.html')">
+            <h3>UNO</h3>
+        </div>
+    <div class="game-card" onclick="openGame('Games/clmegachess.html')">
+            <h3>MegaChess</h3>
+        </div>
+    <div class="game-card" onclick="openGame('Games/clcuttherope.html')">
+            <h3>Cut the Rope</h3>
+        </div>
+    <div class="game-card" data-tags="new" onclick="openGame('Games/cl2048.html')">
+            <h3>2048</h3>
+        </div>
+    <div class="game-card" data-tags="new" onclick="openGame('Games/clpaperio.html')">
+            <h3>Paper.io</h3>
+        </div>
+    <div class="game-card" onclick="openGame('Games/clbloons.html')">
+            <h3>Bloons</h3>
+        </div>
+    <div class="game-card" data-tags="new" onclick="openGame('Games/clADarkRoom.html')">
+            <h3>A Dark Room</h3>
+        </div>
+    <div class="game-card" onclick="openGame('Games/clmyteardrop.html')">
+            <h3>My Teardrop</h3>
+        </div>
+    </div>
+
+
+    <h2 class="category-title">Adventure and RPG</h2>
+    <div class="game-grid">
+    <div class="game-card" data-tags="popular" onclick="openGame('Games/cldeltarune.html')">
+            <h3>Deltarune</h3>
+        </div>
+    <div class="game-card" data-tags="popular" onclick="openGame('Games/clpokemonemerald.html')">
+            <h3>Pokemon Emerald</h3>
+        </div>
+    </div>
+
+
+    <h2 class="category-title">Horror and Story</h2>
+    <div class="game-grid">
+    <div class="game-card" data-tags="popular" onclick="openGame('Games/clbaldisbasics.html')">
+            <h3>Baldis Basics</h3>
+        </div>
     <div class="game-card" onclick="openGame('Games/cldokidokiliteratureclub.html')">
-        <h3>Doki Doki Literature Club</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clFNAF.html')">
-        <h3>Five Nights at Freddy's</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clFNAF2.html')">
-        <h3>Five Nights at Freddy's 2</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clFNAF3.html')">
-        <h3>Five Nights at Freddy's 3</h3>
-    </div>
-
-    <div class="game-card" onclick="openGame('Games/clFNAF4.html')">
-        <h3>Five Nights at Freddy's 4</h3>
-    </div>
-
+            <h3>Doki Doki Literature Club</h3>
+        </div>
+    <div class="game-card" data-tags="popular" onclick="openGame('Games/clFNAF.html')">
+            <h3>Five Nights at Freddy's</h3>
+        </div>
+    <div class="game-card" data-tags="popular" onclick="openGame('Games/clFNAF2.html')">
+            <h3>Five Nights at Freddy's 2</h3>
+        </div>
+    <div class="game-card" data-tags="popular" onclick="openGame('Games/clFNAF3.html')">
+            <h3>Five Nights at Freddy's 3</h3>
+        </div>
+    <div class="game-card" data-tags="popular" onclick="openGame('Games/clFNAF4.html')">
+            <h3>Five Nights at Freddy's 4</h3>
+        </div>
     <div class="game-card" onclick="openGame('Games/clfnafucn.html')">
-        <h3>FNAF: Ultimate Custom Night</h3>
-    </div>
-
+            <h3>FNAF: Ultimate Custom Night</h3>
+        </div>
     <div class="game-card" onclick="openGame('Games/clfnafps.html')">
-        <h3>FNAF Pizzeria Simulator</h3>
+            <h3>FNAF Pizzeria Simulator</h3>
+        </div>
     </div>
 
+
+    <h2 class="category-title">Sandbox and Misc</h2>
+    <div class="game-grid">
+<div class="game-card" onclick="openGame('Games/clEaglercraftL_19_v0_7_0_Offline_Signed.html')">
+            <h3>Eaglercraft Offline</h3>
+        </div>
+    <div class="game-card" onclick="openGame('Games/clfireboyandwatergirl2.html')">
+            <h3>Fireboy &amp; Watergirl 2</h3>
+        </div>
+    <div class="game-card" onclick="openGame('Games/clfireboyandwatergirl3.html')">
+            <h3>Fireboy &amp; Watergirl 3</h3>
+        </div>
+    </div>
+
+
+    <h2 class="category-title">Music and Rhythm</h2>
+    <div class="game-grid">
+    <div class="game-card" data-tags="popular" onclick="openGame('Games/clfridaynightfunkin.html')">
+            <h3>Friday Night Funkin'</h3>
+        </div>
+    </div>
 </div>
 
 
@@ -495,6 +568,44 @@ function animate() {
 
 init();
 animate();
+</script>
+
+
+<script>
+  (function(){
+    const buttons = Array.from(document.querySelectorAll('.tab-btn'))
+    const cards = Array.from(document.querySelectorAll('.game-card'))
+    const categoryTitles = Array.from(document.querySelectorAll('.category-title'))
+    const grids = Array.from(document.querySelectorAll('.game-grid'))
+
+    function applyFilter(filter){
+      // Toggle active button
+      buttons.forEach(b => b.classList.toggle('active', b.dataset.filter === filter))
+
+      // Show/hide cards
+      cards.forEach(card => {
+        const tags = (card.getAttribute('data-tags') || '').toLowerCase().split(/\s+/).filter(Boolean)
+        const show = (filter === 'all') || tags.includes(filter)
+        card.style.display = show ? '' : 'none'
+      })
+
+      // Hide empty grids + titles
+      grids.forEach((grid, i) => {
+        const anyVisible = Array.from(grid.querySelectorAll('.game-card')).some(c => c.style.display !== 'none')
+        grid.style.display = anyVisible ? '' : 'none'
+        // Title is right before grid in DOM; keep robust by using provided list
+        const title = categoryTitles[i]
+        if (title) title.style.display = anyVisible ? '' : 'none'
+      })
+    }
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => applyFilter(btn.dataset.filter))
+    })
+
+    // Default
+    applyFilter('all')
+  })()
 </script>
 
 </body>
