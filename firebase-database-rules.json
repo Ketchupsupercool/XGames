@@ -1,0 +1,19 @@
+{
+  "rules": {
+    "presence": {
+      ".read": true,
+      ".write": true,
+      ".indexOn": ["connectedAt"]
+    },
+    "stats": {
+      ".read": true,
+      ".write": true,
+      "totalVisits": {
+        ".validate": "newData.isNumber() && newData.val() >= 0"
+      },
+      "gamesOpened": {
+        ".validate": "newData.isNumber() && newData.val() >= 0"
+      }
+    }
+  }
+}
